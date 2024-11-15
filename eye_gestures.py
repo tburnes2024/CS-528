@@ -31,7 +31,7 @@ for gesture in gestures:
         os.system('cls' if os.name == 'nt' else 'clear')
 
     #Record Up Gesture
-    for k in range(0,21): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
+    for k in range(41,61): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
         up_data     = { "x":[], "y":[], "t":[] }
         down_data   = { "x":[], "y":[], "t":[] }
         left_data   = { "x":[], "y":[], "t":[] }
@@ -63,6 +63,7 @@ for gesture in gestures:
         os.system('cls' if os.name == 'nt' else 'clear')
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tCollection Complete, Saving Data")
         df = pd.DataFrame(up_data)
-        df.to_csv(os.path.join(os.getcwd(), gesture + "_" + str(k) + '.csv'), index=False)
+        df.to_csv(os.path.join(os.getcwd(), "/dataset/" + gesture + "_" + str(k) + '.csv'), index=False)
+        # df.to_csv("./dataset/" + gesture + "_" + str(k) + '.csv', index=False) # For Jonathan system
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
