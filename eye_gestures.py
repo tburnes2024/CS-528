@@ -16,15 +16,14 @@ height_scale = 1080/sys_height
 width_scale = 1920/sys_width
 
 #store gesture data, 6 gesture types
-up_data     = { "x":[], "y":[], "t":[] }
-down_data   = { "x":[], "y":[], "t":[] }
-left_data   = { "x":[], "y":[], "t":[] }
-right_data  = { "x":[], "y":[], "t":[] }
+
 
 gestures = ["up", "down", "left", "right", "noise"]
 
 for gesture in gestures:
     #Record Gesture Countdown
+    input("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tEnter to Continue Recording next gesture")
+    os.system('cls' if os.name == 'nt' else 'clear')
     for i in range(10, 0, -1):
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tPlease look at the center of the screen")
         print("\t\t\t\t\t\t\tGesture Initializing in: ", i)
@@ -32,7 +31,11 @@ for gesture in gestures:
         os.system('cls' if os.name == 'nt' else 'clear')
 
     #Record Up Gesture
-    for k in range(0,2): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
+    for k in range(0,21): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
+        up_data     = { "x":[], "y":[], "t":[] }
+        down_data   = { "x":[], "y":[], "t":[] }
+        left_data   = { "x":[], "y":[], "t":[] }
+        right_data  = { "x":[], "y":[], "t":[] }
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tPlease execute " + gesture + " gesture")
         time.sleep(0.5)
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -52,7 +55,7 @@ for gesture in gestures:
                 collection_time -= 1
                 print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tCollecting: ", collection_time)
 
-            if i >= 525: break
+            if i >= 400: break
             #100hz sampling rate
             time.sleep(0.01)
 
