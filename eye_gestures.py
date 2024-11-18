@@ -32,7 +32,7 @@ for gesture in gestures:
         os.system('cls' if os.name == 'nt' else 'clear')
 
     #Record Up Gesture
-    for k in range(0, 21): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
+    for k in range(41, 61): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
         up_data     = { "x":[], "y":[], "t":[] }
         down_data   = { "x":[], "y":[], "t":[] }
         left_data   = { "x":[], "y":[], "t":[] }
