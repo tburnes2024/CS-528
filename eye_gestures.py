@@ -42,6 +42,7 @@ for gesture in gestures:
         collection_time = 5
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tCollecting: ", collection_time)
         i = 0
+        
         while True:
 
             x, y = pyautogui.position()
@@ -63,7 +64,7 @@ for gesture in gestures:
         os.system('cls' if os.name == 'nt' else 'clear')
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\tCollection Complete, Saving Data")
         df = pd.DataFrame(up_data)
-        df.to_csv(os.path.join(os.getcwd(), "/dataset/" + gesture + "_" + str(k) + '.csv'), index=False)
-        # df.to_csv("./dataset/" + gesture + "_" + str(k) + '.csv', index=False) # For Jonathan system
+        # df.to_csv(os.path.join(os.getcwd(), "/dataset/" + gesture + "_" + str(k) + '.csv'), index=False)
+        df.to_csv("./dataset/" + gesture + "_" + str(k) + '.csv', index=False) # For Jonathan system
         time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
