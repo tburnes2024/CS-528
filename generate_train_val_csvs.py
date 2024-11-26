@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 
-trainProp = 0.6
+trainProp = 0.8
 numData = [61, 61, 61, 71, 61, 61, 61]
 
 # Generate all filenames for each category
