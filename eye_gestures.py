@@ -19,7 +19,7 @@ width_scale = 1920/sys_width
 
 
 #gestures = ["up", "down", "left", "right", "noise"]
-gestures = ["upTwice", "downTwice"]#, "upDown", "downUp"]
+gestures = ["left"]#, "upDown", "downUp"]
 
 for gesture in gestures:
     #Record Gesture Countdown
@@ -32,7 +32,7 @@ for gesture in gestures:
         os.system('cls' if os.name == 'nt' else 'clear')
 
     #Record Up Gesture
-    for k in range(41, 61): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
+    for k in range(61, 71): #CHANGE THIS TO PROPER RANGE FOR SAMPLE COLLECTION
         up_data     = { "x":[], "y":[], "t":[] }
         down_data   = { "x":[], "y":[], "t":[] }
         left_data   = { "x":[], "y":[], "t":[] }
