@@ -1,8 +1,8 @@
 import pandas as pd
 import random
 
-trainProp = 0.9
-numData = [61, 61, 61, 61, 61, 61, 61]
+trainProp = 0.6
+numData = [61, 61, 61, 71, 61, 61, 61]
 
 # Generate all filenames for each category
 categories = ['down', 'up', 'noise', 'left', 'right', 'upTwice', 'downTwice']
@@ -19,12 +19,14 @@ for i in range(len(categories)):
 # random.shuffle(files)
 
 # Calculate the split index
-train_size = trainProp * numData
+train_size = []
+for i in range(len(categories)):
+    train_size.append(trainProp * numData[i])
 train_files = []
 validate_files = []
 
-for i in range(len(categories)):
-    category = categories[i]
+for i in range(len(files)):
+    category = files[i]
     train_files.extend(category[:int(train_size[i])])
     validate_files.extend(category[int(train_size[i]):])
 

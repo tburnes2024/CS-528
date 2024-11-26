@@ -11,17 +11,17 @@ for file in files:
     x_avg = []
     y_avg = []
     for idx, x in enumerate(df["x"]):
-        if idx < 4:
-            x_avg.append(x)
+        if idx < 19:
+            x_avg.append(df["x"][idx: idx+20].sum()/20)
         else:
-            x_avg.append(df["x"][idx-4: idx+1].sum()/5)
+            x_avg.append(df["x"][idx-19: idx+1].sum()/20)
 
 
     for idx, y in enumerate(df["y"]):
-        if idx < 4:
-            y_avg.append(y)
+        if idx < 19:
+            y_avg.append(df["y"][idx: idx+20].sum()/20)
         else:
-            y_avg.append(df["y"][idx-4: idx+1].sum()/5)
+            y_avg.append(df["y"][idx-19: idx+1].sum()/20)
 
     df["x_avg"] = x_avg
     df["y_avg"] = y_avg
