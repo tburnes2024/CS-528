@@ -11,8 +11,22 @@ import serial
 import time 
 import sys
 
+import pyautogui
+from screeninfo import get_monitors
+
+import joblib
+
 global svm_classifier
 
+train = False # Train a model
+active = True # Run live gesture recognition
+
+os.system('cls' if os.name == 'nt' else 'clear')
+#convert system to 1080 x 1920 dimensions for uniformity
+sys_height = get_monitors()[0].height
+sys_width = get_monitors()[0].width
+height_scale = 1080/sys_height
+width_scale = 1920/sys_width
 
 # Function to load dataset
 def load_data(label_df, data_dir):
@@ -27,10 +41,10 @@ def load_data(label_df, data_dir):
         df = pd.read_csv(filename)
 
         # Keep only accelerometer and gyroscope signals
-        data = df[['acc_x', 'acc_y', 'acc_z', 'gyro_x', 'gyro_y', 'gyro_z']].values.astype(np.float32)
+        data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
 
         # Normalize data
-        data = (data - data.min(axis=0)) / (data.max(axis=0) - data.min(axis=0))
+        data = (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
 
         # Populate lists with normalized data and labels
         features.append(data.flatten())
@@ -45,76 +59,83 @@ def train_and_evaluate_svm(X_train, y_train):
 
     # Train the classifier
     svm_classifier.fit(X_train, y_train)
+    
+    # Save model to a file for later use
+    joblib.dump(svm_classifier, 'svm/svm_model.pkl')
 
 #initialize and train SVM
-train_labels = pd.read_csv("C:\\Users\\tburnes\\Documents\\ESP\\all_train.csv") 
-train_dir = "C:\\Users\\tburnes\\Documents\\ESP\\data" 
+if train:
+    # Load the dataset
+    train_labels = pd.read_csv("./all_train.csv") 
+    train_dir = "./dataset" 
 
-# Create the train and test sets
-X_train, y_train = load_data(train_labels, train_dir)
+    # Create the train and test sets
+    X_train, y_train = load_data(train_labels, train_dir)
 
-# Perform training with SVM
-train_and_evaluate_svm(X_train, y_train)
+    # Perform training with SVM
+    train_and_evaluate_svm(X_train, y_train)
 
-#Enter Data Collection Loop
-input("Press enter to proceed with live gesture recognition")
+if active:
+    # Load model
+    svm_classifier = joblib.load('svm/svm_model.pkl')
 
+    #Enter Data Collection Loop
+    input("Press enter to proceed with live gesture recognition")
 
-acc_data  = { "x":[], "y":[], "z":[]}
-gyro_data = { "x":[], "y":[], "z":[]}
-gyro_t = 0
-acc_t = 0
-mpu_6050 = serial.Serial('COM8', 115200)
-while(1):
+    # acc_data  = { "x":[], "y":[], "z":[]}
+    # gyro_data = { "x":[], "y":[], "z":[]}
+    t = 0
+    # acc_t = 0
+    # mpu_6050 = serial.Serial('COM8', 115200)
+    data = {"x":[], "y":[]}
 
-    data = mpu_6050.readline().decode('utf-8')  
-    parsed_data = data.split()
+    while(1):
 
-    if len(parsed_data) > 2 and parsed_data[2] == "DATA_ACC:":
-        
-        #print("Acceleration data:", parsed_data[3], parsed_data[4], parsed_data[5])
-        acc_data["x"].append(parsed_data[3])
-        acc_data["y"].append(parsed_data[4])
-        acc_data["z"].append(parsed_data[5])
-        acc_t += 1
-    if len(parsed_data) > 2 and parsed_data[2] == "DATA_GYRO:":
-        #print("Gyroscopic data:", parsed_data[3], parsed_data[4], parsed_data[5])
-        gyro_data["x"].append(parsed_data[3])
-        gyro_data["y"].append(parsed_data[4])
-        gyro_data["z"].append(parsed_data[5])
-        gyro_t += 1
+        x, y = pyautogui.position()
+        data["x"].append(width_scale * x)
+        data["y"].append(height_scale * y)
+        t += 1
+        time.sleep(0.01)
 
-    #If 4 seconds of data is collected run prediction, reset buffer and 
-    # immediately begin new gesture recognition    
-    if gyro_t == acc_t and acc_t == 400:
-        data = {}
-        data["acc_x"] = acc_data["x"]
-        data["acc_y"] = acc_data["y"]
-        data["acc_z"] = acc_data["z"]
-        data["gyro_x"] = gyro_data["x"]
-        data["gyro_y"] = gyro_data["y"]
-        data["gyro_z"] = gyro_data["z"]
-        df = pd.DataFrame(data)
-        data = df[['acc_x', 'acc_y', 'acc_z', 'gyro_x', 'gyro_y', 'gyro_z']].values.astype(np.float32)
-        # Normalize data
-        data = (data - data.min(axis=0)) / (data.max(axis=0) - data.min(axis=0))
-        os.system('cls' if os.name == 'nt' else 'clear')
-        time.sleep(0.2)
-        #print(svm_classifier.predict([data.flatten()])[0])
-        probs = svm_classifier.predict_proba([data.flatten()])
-        # print(probs)
-        # print(svm_classifier.classes_)
-        gestures = ["down", "left", "right", "up"]
-        if probs[0][3] > 0.66:
-            print('undetected')
-        else:
-            print(gestures[np.argmax(np.append(probs[0 , 0:3], probs[0, -1]))])
+        #If 4 seconds of data is collected run prediction, reset buffer and 
+        # immediately begin new gesture recognition    
+        if t == 400:
+            df = pd.DataFrame(data)
+            x_avg = []
+            y_avg = []
+            for idx, x in enumerate(data["x"]):
+                if idx < 19:
+                    x_avg.append(df["x"][idx: idx+20].sum()/20)
+                else:
+                    x_avg.append(df["x"][idx-19: idx+1].sum()/20)
+            for idx, y in enumerate(df["y"]):
+                if idx < 19:
+                    y_avg.append(df["y"][idx: idx+20].sum()/20)
+                else:
+                    y_avg.append(df["y"][idx-19: idx+1].sum()/20)
+            df["x_avg"] = x_avg
+            df["y_avg"] = y_avg
+            # Normalize data
+            data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
+            data = (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
+            os.system('cls' if os.name == 'nt' else 'clear')
 
-        acc_data  = { "x":[], "y":[], "z":[]}
-        gyro_data = { "x":[], "y":[], "z":[]}
-        gyro_t = 0
-        acc_t = 0
-        time.sleep(0.5)
-        print("----")
-        mpu_6050.reset_input_buffer()
-        
+            df["x_avg"] = x_avg
+            df["y_avg"] = y_avg
+            time.sleep(0.2)
+            print(svm_classifier.predict([data.flatten()])[0])
+            probs = svm_classifier.predict_proba([data.flatten()])
+            # print(probs)
+            # print(svm_classifier.classes_)
+            # gestures = ["down", "left", "right", "up"]
+            # if probs[0][3] > 0.66:
+            #     print('undetected')
+            # else:
+            #     print(gestures[np.argmax(np.append(probs[0 , 0:3], probs[0, -1]))])
+            print(probs)
+
+            data  = { "x":[], "y":[]}
+            t = 0
+            time.sleep(1)
+            print("----")
+            
