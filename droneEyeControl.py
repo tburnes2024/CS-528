@@ -128,7 +128,7 @@ def main():
                     print("----")
             
     except KeyboardInterrupt:
-        print("Exiting gracefully...")
+        print("Exiting...")
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
