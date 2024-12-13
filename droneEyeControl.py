@@ -33,10 +33,12 @@ def collect_and_predict(data, classifier):
     df = pd.DataFrame(data)
     df["x_avg"] = df["x"].rolling(window=20, min_periods=1).mean()
     df["y_avg"] = df["y"].rolling(window=20, min_periods=1).mean()
+
+    data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
     
     # normalized_data = normalize_data(df)
     # dont' normalize
-    classification = classifier.predict([df.flatten()])[0]
+    classification = classifier.predict([data.flatten()])[0]
     print(f"Predicted Gesture: {classification}")
     return classification
 
@@ -72,7 +74,8 @@ def execute_movement(tello, classification):
 
 def main():
     tello = initialize_drone()
-    svm_classifier = joblib.load('svm/svm_model.pkl')
+    svm_classifier = joblib.load('models/svm_model.pkl')
+    knn_classifier = joblib.load('models/knn_model.pkl')
     print("Machine Learning Model Loaded.")
 
     airborne = False
@@ -87,13 +90,27 @@ def main():
 
     print("Press t to takeoff, f to land:")
 
+    pause = False
+
     try:
         while True:
+            if not pause and keyboard.is_pressed('p'):  # 'P' for pause
+                pause = True
+                input(f"\n\n\nPausing, press ENTER to resume.\n\n\n")
+                pause = False
+                print("Resuming...\n\n")
+                data = {"x": [], "y": []}
+                t = 0
+                time.sleep(1)
+                print("Collecting gesture...")
+                continue
+
+
             if keyboard.is_pressed('t'):  # 'T' for takeoff
                     try:
                         tello.takeoff()
                         print("Drone is airborne.")
-                        print("Press t to takeoff, f to land. Collecting gesture...")
+                        print("Press t to takeoff, l to land. Collecting gesture...")
                         airborne = True
                     except Exception as e:
                         print(f"Takeoff failed: {e}")
@@ -119,7 +136,7 @@ def main():
                 t += 1
                 time.sleep(0.01)  
                 if t == BUFFER_SIZE:
-                    classification = collect_and_predict(data, svm_classifier)
+                    classification = collect_and_predict(data, knn_classifier) # Swap to KNN if preferred
                     execute_movement(tello, classification)
                     data = {"x": [], "y": []}
                     t = 0

@@ -18,8 +18,8 @@ import joblib
 
 global svm_classifier
 
-train = False # Train a model
-active = True # Run live gesture recognition
+train = True # Train a model
+active = False # Run live gesture recognition
 
 os.system('cls' if os.name == 'nt' else 'clear')
 #convert system to 1080 x 1920 dimensions for uniformity
@@ -52,42 +52,59 @@ def load_data(label_df, data_dir):
 
     return np.array(features), np.array(labels)
 
-def train_and_evaluate_svm(X_train, y_train, X_test, y_test):
+def train_and_evaluate_svm(X_train, y_train, X_test, y_test, evaluation=True):
     # Create the SVM classifier
     global svm_classifier
     svm_classifier = SVC(kernel='rbf', probability=True)
+    knn_classifier = KNeighborsClassifier(n_neighbors=3)
 
     # Train the classifier
     svm_classifier.fit(X_train, y_train)
+    knn_classifier.fit(X_train, y_train)
 
-    # Evaluate the classifier
-    y_pred = svm_classifier.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f'SVM accuracy: {accuracy:.3%}')
+    if evaluation:
+        # Evaluate the classifier
+        y_pred = svm_classifier.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        print(f'SVM accuracy: {accuracy:.3%}')
 
-    conf_matrix = confusion_matrix(y_test, y_pred)
-    sns.heatmap(conf_matrix, annot=True, cmap="Blues", xticklabels=svm_classifier.classes_, yticklabels=svm_classifier.classes_)
-    plt.title('train')
-    plt.xlabel('pred')
-    plt.ylabel('actual')
-    plt.show()
+        conf_matrix = confusion_matrix(y_test, y_pred)
+        sns.heatmap(conf_matrix, annot=True, cmap="Blues", xticklabels=svm_classifier.classes_, yticklabels=svm_classifier.classes_)
+        plt.title('train')
+        plt.xlabel('pred')
+        plt.ylabel('actual')
+        plt.show()
+
+        y_pred = knn_classifier.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        print(f'SVM accuracy: {accuracy:.3%}')
+
+        conf_matrix = confusion_matrix(y_test, y_pred)
+        sns.heatmap(conf_matrix, annot=True, cmap="Blues", xticklabels=svm_classifier.classes_, yticklabels=svm_classifier.classes_)
+        plt.title('train')
+        plt.xlabel('pred')
+        plt.ylabel('actual')
+        plt.show()
     
     # Save model to a file for later use
-    joblib.dump(svm_classifier, 'svm/svm_model.pkl')
+    joblib.dump(svm_classifier, 'models/svm_model.pkl')
+    joblib.dump(svm_classifier, 'models/knn_model.pkl')
 
 #initialize and train SVM
 if train:
     # Load the dataset
-    train_labels = pd.read_csv("./train.csv") 
-    test_labels = pd.read_csv("./validate.csv") 
+    train_labels = pd.read_csv("./train.csv")
+    test_labels = pd.read_csv("./validate.csv")
+    all_labels = pd.read_csv("./all_train.csv")
     train_dir = "./dataset" 
 
     # Create the train and test sets
     X_train, y_train = load_data(train_labels, train_dir)
     X_test, y_test = load_data(test_labels, train_dir)
+    x_all, y_all = load_data(all_labels, train_dir)
 
-    # Perform training with SVM
-    train_and_evaluate_svm(X_train, y_train, X_test, y_test)
+    # Perform training with SVM. Change boolean for evaluation and passed-in data if necessary.
+    train_and_evaluate_svm(x_all, y_all, X_test, y_test, evaluation=False)
 
 if active:
     # Load model
