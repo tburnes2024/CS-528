@@ -44,7 +44,7 @@ def load_data(label_df, data_dir):
         data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
 
         # Normalize data
-        data = (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
+        # data = (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
 
         # Populate lists with normalized data and labels
         features.append(data.flatten())
@@ -52,13 +52,25 @@ def load_data(label_df, data_dir):
 
     return np.array(features), np.array(labels)
 
-def train_and_evaluate_svm(X_train, y_train):
+def train_and_evaluate_svm(X_train, y_train, X_test, y_test):
     # Create the SVM classifier
     global svm_classifier
     svm_classifier = SVC(kernel='rbf', probability=True)
 
     # Train the classifier
     svm_classifier.fit(X_train, y_train)
+
+    # Evaluate the classifier
+    y_pred = svm_classifier.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f'SVM accuracy: {accuracy:.3%}')
+
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    sns.heatmap(conf_matrix, annot=True, cmap="Blues", xticklabels=svm_classifier.classes_, yticklabels=svm_classifier.classes_)
+    plt.title('train')
+    plt.xlabel('pred')
+    plt.ylabel('actual')
+    plt.show()
     
     # Save model to a file for later use
     joblib.dump(svm_classifier, 'svm/svm_model.pkl')
@@ -66,14 +78,16 @@ def train_and_evaluate_svm(X_train, y_train):
 #initialize and train SVM
 if train:
     # Load the dataset
-    train_labels = pd.read_csv("./all_train.csv") 
+    train_labels = pd.read_csv("./train.csv") 
+    test_labels = pd.read_csv("./validate.csv") 
     train_dir = "./dataset" 
 
     # Create the train and test sets
     X_train, y_train = load_data(train_labels, train_dir)
+    X_test, y_test = load_data(test_labels, train_dir)
 
     # Perform training with SVM
-    train_and_evaluate_svm(X_train, y_train)
+    train_and_evaluate_svm(X_train, y_train, X_test, y_test)
 
 if active:
     # Load model
@@ -117,7 +131,7 @@ if active:
             df["y_avg"] = y_avg
             # Normalize data
             data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
-            data = (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
+            # data = (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
             os.system('cls' if os.name == 'nt' else 'clear')
 
             df["x_avg"] = x_avg

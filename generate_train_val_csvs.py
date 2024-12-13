@@ -5,11 +5,7 @@ trainProp = 0.8
 numData = [61, 61, 61, 71, 61, 61, 61]
 
 # Generate all filenames for each category
-<<<<<<< HEAD
 categories = ['down', 'up', 'noise', 'left', 'right', 'downTwice', 'upTwice']
-=======
-categories = ['down', 'up', 'noise', 'left', 'right', 'upTwice', 'downTwice']
->>>>>>> 379cad4e608cd3c87727d7c249f176bb22152a1a
 files = []
 
 # Create filenames for each category from 0 to 60
