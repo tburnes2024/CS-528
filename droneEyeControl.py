@@ -25,17 +25,18 @@ def initialize_drone():
     print(f"Connected to Tello. Battery Level: {tello.get_battery()}%")
     return tello
 
-def normalize_data(df):
-    data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
-    return (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
+# def normalize_data(df):
+#     data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
+#     return (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
 
 def collect_and_predict(data, classifier):
     df = pd.DataFrame(data)
     df["x_avg"] = df["x"].rolling(window=20, min_periods=1).mean()
     df["y_avg"] = df["y"].rolling(window=20, min_periods=1).mean()
     
-    normalized_data = normalize_data(df)
-    classification = classifier.predict([normalized_data.flatten()])[0]
+    # normalized_data = normalize_data(df)
+    # dont' normalize
+    classification = classifier.predict([df.flatten()])[0]
     print(f"Predicted Gesture: {classification}")
     return classification
 
@@ -89,7 +90,6 @@ def main():
     try:
         while True:
             if keyboard.is_pressed('t'):  # 'T' for takeoff
-                if not airborne:
                     try:
                         tello.takeoff()
                         print("Drone is airborne.")
@@ -97,8 +97,7 @@ def main():
                         airborne = True
                     except Exception as e:
                         print(f"Takeoff failed: {e}")
-                else:
-                    print("Drone is already airborne.")
+             
 
             if keyboard.is_pressed('l'):  # 'L' for landing
                 if airborne:
