@@ -88,7 +88,7 @@ def train_and_evaluate_svm(X_train, y_train, X_test, y_test, evaluation=True):
     
     # Save model to a file for later use
     joblib.dump(svm_classifier, 'models/svm_model.pkl')
-    joblib.dump(svm_classifier, 'models/knn_model.pkl')
+    joblib.dump(knn_classifier, 'models/knn_model.pkl')
 
 #initialize and train SVM
 if train:
