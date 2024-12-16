@@ -2,7 +2,7 @@ import pandas as pd
 import random
 
 trainProp = 0.8
-numData = [81, 81, 81, 81, 81, 81, 81]
+numData = [101, 101, 101, 101, 101, 101, 101]
 
 # Generate all filenames for each category
 categories = ['down', 'up', 'noise', 'left', 'right', 'upTwice', 'downTwice']
