@@ -53,7 +53,4 @@ KNN Model(better model): https://www.youtube.com/watch?v=nPddyZN4p3M
 SVM Model: https://www.youtube.com/watch?v=Tm17ogwmUQo
 
 
-[(https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=Tm17ogwmUQo)
-
-
 
