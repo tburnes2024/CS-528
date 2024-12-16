@@ -9,11 +9,8 @@
 - [Contributing](#contributing)
 
 
-### Any optional sections
-
 ## Background
 
-### Any optional sections
 
 ## Install
 
@@ -50,18 +47,10 @@ I will list how to use the most fundamental scripts to the project. Most of the 
   Contains most recent SVM and KNN models that are loaded in for live testing.
 
 
-### Any optional sections
+### See our Live Demo on Youtube!
+KNN Model(better model): https://www.youtube.com/watch?v=nPddyZN4p3M
 
-## More optional sections
+SVM Model: https://www.youtube.com/watch?v=Tm17ogwmUQo
 
-## Contributing
-
-See [the contributing file](CONTRIBUTING.md)!
-
-PRs accepted.
-
-Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
-
-### Any optional sections
 
 
