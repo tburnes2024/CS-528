@@ -141,7 +141,7 @@ def main():
                     data = {"x": [], "y": []}
                     t = 0
 
-                    print("----")
+                    print("--------------------")
             
     except KeyboardInterrupt:
         print("Exiting...")

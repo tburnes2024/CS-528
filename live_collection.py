@@ -18,8 +18,8 @@ import joblib
 
 global svm_classifier
 
-train = True # Train a model
-active = False # Run live gesture recognition
+train = False # Train a model
+active = True # Run live gesture recognition
 
 os.system('cls' if os.name == 'nt' else 'clear')
 #convert system to 1080 x 1920 dimensions for uniformity
@@ -108,7 +108,7 @@ if train:
 
 if active:
     # Load model
-    svm_classifier = joblib.load('svm/svm_model.pkl')
+    svm_classifier = joblib.load('models/knn_model.pkl')
 
     #Enter Data Collection Loop
     input("Press enter to proceed with live gesture recognition")
@@ -132,27 +132,31 @@ if active:
         # immediately begin new gesture recognition    
         if t == 400:
             df = pd.DataFrame(data)
-            x_avg = []
-            y_avg = []
-            for idx, x in enumerate(data["x"]):
-                if idx < 19:
-                    x_avg.append(df["x"][idx: idx+20].sum()/20)
-                else:
-                    x_avg.append(df["x"][idx-19: idx+1].sum()/20)
-            for idx, y in enumerate(df["y"]):
-                if idx < 19:
-                    y_avg.append(df["y"][idx: idx+20].sum()/20)
-                else:
-                    y_avg.append(df["y"][idx-19: idx+1].sum()/20)
-            df["x_avg"] = x_avg
-            df["y_avg"] = y_avg
+            # x_avg = []
+            # y_avg = []
+            # for idx, x in enumerate(data["x"]):
+            #     if idx < 19:
+            #         x_avg.append(df["x"][idx: idx+20].sum()/20)
+            #     else:
+            #         x_avg.append(df["x"][idx-19: idx+1].sum()/20)
+            # for idx, y in enumerate(df["y"]):
+            #     if idx < 19:
+            #         y_avg.append(df["y"][idx: idx+20].sum()/20)
+            #     else:
+            #         y_avg.append(df["y"][idx-19: idx+1].sum()/20)
+            
+            # df["x_avg"] = x_avg
+            # df["y_avg"] = y_avg
+            
+            df["x_avg"] = df["x"].rolling(window=20, min_periods=1).mean()
+            df["y_avg"] = df["y"].rolling(window=20, min_periods=1).mean()
             # Normalize data
             data = df[['x', 'y', 'x_avg', 'y_avg']].values.astype(np.float32)
             # data = (data - data.min(axis=0) + 1) / (data.max(axis=0) - data.min(axis=0) + 1)
             os.system('cls' if os.name == 'nt' else 'clear')
 
-            df["x_avg"] = x_avg
-            df["y_avg"] = y_avg
+            # df["x_avg"] = x_avg
+            # df["y_avg"] = y_avg
             time.sleep(0.2)
             print(svm_classifier.predict([data.flatten()])[0])
             probs = svm_classifier.predict_proba([data.flatten()])
