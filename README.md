@@ -1,19 +1,7 @@
 # Title
 
-![banner]()
-
-![badge]()
-![badge]()
-[![license](https://img.shields.io/github/license/:user/:repo.svg)](LICENSE)
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-
-This is an example file with maximal choices selected.
-
-This is a long description.
-
 ## Table of Contents
 
-- [Security](#security)
 - [Background](#background)
 - [Install](#install)
 - [Usage](#usage)
@@ -21,7 +9,6 @@ This is a long description.
 - [Contributing](#contributing)
 - [License](#license)
 
-## Security
 
 ### Any optional sections
 
@@ -31,17 +18,27 @@ This is a long description.
 
 ## Install
 
-This module depends upon a knowledge of [Markdown]().
+This code requires the following python libraries to operate
 
 ```
+os
+numpy
+pandas
+pyautogui
+time
+sklearn
+djitellopy
+screeninfo
+joblib
+keyboard  
 ```
 
 ### Any optional sections
 
 ## Usage
+I will list how to use the most fundamental scripts to the project. Most of the scripts in the repo will not need to be accessed and were mostly used for testing and collecting training data for the model.
 
-```
-```
+#live_collection.py
 
 Note: The `license` badge image link at the top of this file should be updated with the correct `:user` and `:repo`.
 
